@@ -1,4 +1,4 @@
-package leo.domainobject;
+package leo.dto;
 
 import java.io.Serializable;
 
