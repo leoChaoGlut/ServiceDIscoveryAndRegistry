@@ -2,13 +2,11 @@ package leo.controller;
 
 import java.util.Map;
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import leo.Bootstrap;
 import leo.check.HealthCheck;
 import leo.do_.ServiceInfo;
 import leo.do_.ServicePool;
@@ -22,11 +20,7 @@ import leo.dto.Result;
  */
 @RestController
 @RequestMapping("/service")
-public class RegisterController implements HealthCheck {
-
-	public static void main(String[] args) {
-		SpringApplication.run(Bootstrap.class, args);
-	}
+public class ServiceController implements HealthCheck {
 
 	// 请求头需要有:Content-type: application/x-www-form-urlencoded,否则参数获取不到.
 	@RequestMapping(path = { "/register" }, method = RequestMethod.POST)
@@ -51,4 +45,5 @@ public class RegisterController implements HealthCheck {
 	Map<String, ServiceInfo> getServiceList() {
 		return ServicePool.getServicePool();
 	}
+
 }

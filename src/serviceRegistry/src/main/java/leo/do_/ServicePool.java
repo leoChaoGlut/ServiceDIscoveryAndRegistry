@@ -12,10 +12,7 @@ import leo.dto.RegServiceReqParam;
  */
 
 public class ServicePool {
-	/**
-	 * key:serviceName <br>
-	 * value:list of HostAndPort
-	 */
+
 	private static Map<String, ServiceInfo> servicePool = new HashMap<>();
 
 	private ServicePool() {
