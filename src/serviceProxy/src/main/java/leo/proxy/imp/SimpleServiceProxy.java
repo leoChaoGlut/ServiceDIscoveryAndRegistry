@@ -29,12 +29,13 @@ import leo.proxy.ServiceProxy;
 
 public class SimpleServiceProxy implements ServiceProxy {
 
+	@Override
 	public CloseableHttpResponse exec(Url url, HttpUriRequest req) throws Exception {
 		if (url == null) {
 			throw new Exception("Url is null");
 		}
 		Result result = findServices(url.getServiceName()); // 1.通过serviceName找到所有对应的可提供服务的url;
-		boolean passValidation = validate(url, result);// 2.校验result
+		boolean passValidation = validate(url.getServiceName(), result);// 2.校验result
 		String targetUrl = null;
 		if (passValidation) {
 			ServiceInfo serviceInfo = JSON.parseObject(result.getData().toString(), ServiceInfo.class);
@@ -48,6 +49,7 @@ public class SimpleServiceProxy implements ServiceProxy {
 		return httpClient.execute(req);// 4.执行请求
 	}
 
+	@Override
 	public Result findServices(String serviceName) {
 		String resultString = null;
 		try {
@@ -60,6 +62,7 @@ public class SimpleServiceProxy implements ServiceProxy {
 		return JSON.parseObject(resultString, Result.class);
 	}
 
+	@Override
 	public String loadBalance(Url url, ServiceInfo serviceInfo) throws Exception {
 		Set<HostAndPort> hapSet = serviceInfo.getHostAndPortSet();
 		int randomIndex = new Random().nextInt(hapSet.size());
@@ -73,13 +76,14 @@ public class SimpleServiceProxy implements ServiceProxy {
 		return null;
 	}
 
-	public boolean validate(Url url, Result result) throws Exception {
+	@Override
+	public boolean validate(String serviceName, Result result) throws Exception {
 		if (result == null) {
 			throw new Exception("Can't link to the service registry of " + Config.newInstance().getDiscoverUrl());
 		} else if (result.getCode() != 200) {
 			throw new Exception("Service registry return an error msg:" + result.getMsg());
 		} else if (result.getData() == null) {
-			throw new Exception("Service:" + url.getServiceName() + " not found");
+			throw new Exception("Service:" + serviceName + " not found");
 		} else {
 			return true;
 		}

@@ -29,12 +29,12 @@ public interface ServiceProxy {
 	/**
 	 * 对getServices()返回的结果进行校验
 	 * 
-	 * @param url
+	 * @param serviceName
 	 * @param result
 	 * @return
 	 * @throws Exception
 	 */
-	boolean validate(Url url, Result result) throws Exception;
+	boolean validate(String serviceName, Result result) throws Exception;
 
 	/**
 	 * 一个serviceName可能对应多个能提供相同服务的url,所以要进行选择.这里使用了随机数选择.可以根据需要,重写此处的算法.

@@ -2,6 +2,7 @@ package leo.controller;
 
 import java.util.Map;
 
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,6 +21,7 @@ import leo.dto.Result;
  */
 @RestController
 @RequestMapping("/service")
+@EnableAutoConfiguration
 public class ServiceController implements HealthCheck {
 
 	// 请求头需要有:Content-type: application/x-www-form-urlencoded,否则参数获取不到.
