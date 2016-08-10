@@ -1,8 +1,14 @@
 package leo.proxy.imp;
 
+import java.lang.ref.SoftReference;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -28,6 +34,10 @@ import leo.proxy.ServiceProxy;
  */
 
 public class SimpleServiceProxy implements ServiceProxy {
+
+	private static SoftReference<Set<HostAndPort>> recordSetRef = new SoftReference<>(new HashSet<>());
+
+	private final Lock lock = new ReentrantLock();
 
 	@Override
 	public CloseableHttpResponse exec(Url url, HttpUriRequest req) throws Exception {
@@ -65,13 +75,30 @@ public class SimpleServiceProxy implements ServiceProxy {
 	@Override
 	public String loadBalance(Url url, ServiceInfo serviceInfo) throws Exception {
 		Set<HostAndPort> hapSet = serviceInfo.getHostAndPortSet();
-		int randomIndex = new Random().nextInt(hapSet.size());
-		int i = 0;
-		for (HostAndPort hap : hapSet) {
-			if (randomIndex == i++) {
-				url.setHost(hap.getHost()).setPort(hap.getPort());
-				return url.asString();
+		List<HostAndPort> hapList = new ArrayList<>(hapSet);
+		int size = hapList.size();
+		lock.lock();// 加锁是为了防止SoftReference被引用的时候,正好要发生OOM导致SoftReference所指向的对象为空,导致的空指针异常.
+		try {
+			for (int i = 0; i < size; i++) {
+				HostAndPort hap = hapList.get(i);
+				Set<HostAndPort> recordSet = recordSetRef.get();
+				if (recordSet == null) {
+					recordSetRef = new SoftReference<>(new HashSet<>());
+					recordSet = recordSetRef.get();
+				}
+				if (recordSet.contains(hap)) {
+					if (i + 1 == size) {
+						recordSet.clear();
+						i = 0;
+					}
+				} else {
+					recordSet.add(hap);
+					url.setHost(hap.getHost()).setPort(hap.getPort());
+					return url.asString();
+				}
 			}
+		} finally {
+			lock.unlock();
 		}
 		return null;
 	}

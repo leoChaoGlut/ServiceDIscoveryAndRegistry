@@ -3,6 +3,7 @@ package leo.test;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -11,6 +12,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
 import org.junit.Test;
 
+import leo.do_.ServiceInfo;
 import leo.do_.Url;
 import leo.proxy.imp.SimpleServiceProxy;
 
@@ -28,7 +30,7 @@ public class MyTest {
 	 */
 	@Test
 	public void test01() throws IOException {
-		Url url = Url.newInstance().setServiceName("serviceRegistry01").setPath("/service/all");
+		Url url = Url.newInstance().setServiceName("service01").setPath("/service/all");
 		CloseableHttpResponse response = null;
 		try {
 			response = new SimpleServiceProxy().get(url);
@@ -77,6 +79,22 @@ public class MyTest {
 					e.printStackTrace();
 				}
 			}
+		}
+	}
+
+	@Test
+	public void test03() {
+		Url url = Url.newInstance().setServiceName("service01").setPath("/service/all");
+		try {
+			new SimpleServiceProxy().get(url);
+			TimeUnit.SECONDS.sleep(8);
+			new SimpleServiceProxy().get(url);
+			TimeUnit.SECONDS.sleep(8);
+			new SimpleServiceProxy().get(url);
+			TimeUnit.SECONDS.sleep(8);
+			new SimpleServiceProxy().get(url);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 }

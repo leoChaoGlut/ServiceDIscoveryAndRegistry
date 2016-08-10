@@ -23,6 +23,6 @@ public class Bootstrap implements EmbeddedServletContainerCustomizer {
 
 	@Override
 	public void customize(ConfigurableEmbeddedServletContainer container) {
-		container.setPort(8888);
+		container.setPort(8890);
 	}
 }
