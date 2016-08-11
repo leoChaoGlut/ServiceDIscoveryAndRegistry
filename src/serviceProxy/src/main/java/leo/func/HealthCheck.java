@@ -1,4 +1,4 @@
-package leo.check;
+package leo.func;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 

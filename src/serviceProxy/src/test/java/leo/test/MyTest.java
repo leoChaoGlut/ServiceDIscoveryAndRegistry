@@ -12,8 +12,10 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
 import org.junit.Test;
 
+import leo.do_.AutoRegistry;
 import leo.do_.ServiceInfo;
 import leo.do_.Url;
+import leo.func.AutoRegisterService;
 import leo.proxy.imp.SimpleServiceProxy;
 
 /**
@@ -96,5 +98,11 @@ public class MyTest {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Test
+	public void test04() {
+		AutoRegisterService.register(AutoRegistry.newInstance().setHealthCheckPath("/user")
+				.setServiceName("userService1").setRegistryPort(8890));
 	}
 }
